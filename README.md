@@ -1,4 +1,4 @@
-### Telegram Kelime Oyunu 
+### Telegram Kelime Türet Oyunu 
 📝
 ## Deploy to Heroku
 
