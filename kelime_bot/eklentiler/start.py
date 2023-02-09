@@ -11,12 +11,15 @@ from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 keyboard = InlineKeyboardMarkup([
     [
-        InlineKeyboardButton("➕ Grubuna Ekle", url=f"http://t.me/MajesteKelimeBot?startgroup=new")
+        InlineKeyboardButton(
+            "➕ Grubuna Ekle",
+            url="http://t.me/MajesteKelimeBot?startgroup=new",
+        )
     ],
     [
         InlineKeyboardButton("🇹🇷 Sahibim", url="t.me/sohbetf"),
         InlineKeyboardButton("💬 Chat", url="t.me/sohbetf"),
-    ]
+    ],
 ])
 
 
@@ -49,42 +52,40 @@ async def help(bot, message):
   await message.reply_photo("https://telegra.ph/file/3a177f6d7b5b5a3d0548f.jpg",caption=HELP) 
 
 # Oyunu başlat. 
-@Client.on_message(filters.command("game")) 
+@Client.on_message(filters.command("game"))
 async def kelimeoyun(c:Client, m:Message):
-    global oyun
-    aktif = False
-    try:
-        aktif = oyun[m.chat.id]["aktif"]
-        aktif = True
-    except:
-        aktif = False
+  global oyun
+  aktif = False
+  try:
+      aktif = oyun[m.chat.id]["aktif"]
+      aktif = True
+  except:
+      aktif = False
 
-    if aktif:
-        await m.reply("**❗ Oyun Zaten Grubunuzda Devam Ediyor ✍🏻 \n Oyunu durdurmak için yazıp /cancel durdurabilirsiniz")
-    else:
-        await m.reply(f"**{m.from_user.mention}** Tarafından! \nKelime Bulma Oyunu Başladı .\n\nİyi Şanslar !", reply_markup=kanal)
-        
-        oyun[m.chat.id] = {"kelime":kelime_sec()}
-        oyun[m.chat.id]["aktif"] = True
-        oyun[m.chat.id]["round"] = 1
-        oyun[m.chat.id]["pass"] = 0
-        oyun[m.chat.id]["oyuncular"] = {}
-        
-        kelime_list = ""
-        kelime = list(oyun[m.chat.id]['kelime'])
-        shuffle(kelime)
-        
-        for harf in kelime:
-            kelime_list+= harf + " "
-        
-        text = f"""
+  if aktif:
+    await m.reply("**❗ Oyun Zaten Grubunuzda Devam Ediyor ✍🏻 \n Oyunu durdurmak için yazıp /cancel durdurabilirsiniz")
+  else:
+    await m.reply(f"**{m.from_user.mention}** Tarafından! \nKelime Bulma Oyunu Başladı .\n\nİyi Şanslar !", reply_markup=kanal)
+
+    oyun[m.chat.id] = {
+        "kelime": kelime_sec(),
+        "aktif": True,
+        "round": 1,
+        "pass": 0,
+        "oyuncular": {},
+    }
+    kelime = list(oyun[m.chat.id]['kelime'])
+    shuffle(kelime)
+
+    kelime_list = "".join(f"{harf} " for harf in kelime)
+    text = f"""
 🎯 Raund : {oyun[m.chat.id]['round']}/60 
 📝 Söz :   <code>{kelime_list}</code>
 💰 Kazandığınız Puan: 1
 🔎 İpucu: 1. {oyun[m.chat.id]["kelime"][0]}
-✍🏻 Uzunluk : {int(len(kelime_list)/2)} 
+✍🏻 Uzunluk : {len(kelime_list) // 2} 
 
 ✏️ Karışık harflerden doğru kelimeyi bulun
         """
-        await c.send_message(m.chat.id, text)
+    await c.send_message(m.chat.id, text)
         
